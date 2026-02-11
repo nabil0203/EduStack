@@ -29,6 +29,7 @@ ALLOWED_HOSTS = []
 
 
 
+# Custom user model
 # models.py of users_app
 AUTH_USER_MODEL = 'users_app.User'
 
