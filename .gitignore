@@ -1,0 +1,10 @@
+# Environments
+my_env/
+.env
+env/
+venv/
+ENV/
+
+
+# Database
+db.sqlite3
