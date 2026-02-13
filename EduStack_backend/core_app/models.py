@@ -93,7 +93,7 @@ class Enrollment(models.Model):
 
 
     def __str__(self):
-        return f"{self.student.username} - {self.course.title}"                      # returns the specific username, title and description of the question
+        return f"{self.student.username} - {self.course.title}"                      # returns the specific username, title
     
 
 
