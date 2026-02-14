@@ -33,7 +33,7 @@ class MaterialSerializers(serializers.ModelSerializer):
 class EnrollmentSerializers(serializers.ModelSerializer):
     class Meta:
         model = models.Enrollment
-        fields = '__all__'
+        fields = ['student', 'course']
 
 
 class QuestionAnswerSerializers(serializers.ModelSerializer):

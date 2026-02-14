@@ -17,6 +17,10 @@ class User(AbstractUser):                                                       
     mobile_no = models.CharField(max_length=15)                                      # extra with the User class
 
 
+    def __str__(self):
+        return f"{self.id}. {self.username} - {self.role}"
+
+
 
 
 
