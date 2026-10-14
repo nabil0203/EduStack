@@ -1,26 +1,43 @@
-"""
-URL configuration for EduStack_backend project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path
+import users_app.views as user_views
+import core_app.views as core_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('api/user/', include('users_app.urls')),
-    path('api/', include('core_app.urls'))
-    
+    # auth
+    path('api/register/', user_views.register_user, name='regsiter'),
+    path('api/login/', user_views.login_user, name='login'),
+    path('api/protected/', user_views.protected_view, name='protected'),
+
+    # users
+    path('api/teacher/', user_views.teacher_list, name='teacher-list'),
+    path('api/teacher/<int:pk>/', user_views.teacher_detail, name='teacher-detail'),
+    path('api/student/', user_views.student_list, name='student-list'),
+    path('api/student/<int:pk>/', user_views.student_detail, name='student-detail'),
+
+    # courses
+    path('api/course/', core_views.course_list_create, name='course-list'),
+    path('api/course/<int:pk>/', core_views.course_detail, name='course-detail'),
+
+    # enrollments
+    path('api/enrollment/', core_views.enrollment_list, name='enrollment-list'),
+    path('api/enrollment/<int:pk>/', core_views.enrollment_detail, name='enrollment-detail'),
+
+    # lessons
+    path('api/lesson/', core_views.lesson_list_create, name='lesson-list'),
+    path('api/lesson/<int:pk>/', core_views.lesson_detail, name='lesson-detail'),
+
+    # assignments
+    path('api/assignment/', core_views.assignment_list, name='assignment-list'),
+    path('api/assignment/<int:pk>/', core_views.assignment_detail, name='assignment-detail'),
+
+    # submissions
+    path('api/submission/', core_views.submission_list, name='submission-list'),
+    path('api/submission/<int:pk>/', core_views.submission_detail, name='submission-detail'),
+
+    # results
+    path('api/results/', core_views.result_list, name='result-list'),
+    path('api/results/<int:pk>/', core_views.result_detail, name='result-detail'),
 ]

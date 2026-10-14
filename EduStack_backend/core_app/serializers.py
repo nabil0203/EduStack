@@ -2,12 +2,10 @@ from rest_framework import serializers
 from . import models
 
 
-
 class CategorySerializers(serializers.ModelSerializer):
     class Meta:
         model = models.Category
         fields = '__all__'
-
 
 
 class CourseSerializers(serializers.ModelSerializer):
@@ -16,12 +14,10 @@ class CourseSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
 class LessonSerializers(serializers.ModelSerializer):
     class Meta:
         model = models.Lesson
         fields = '__all__'
-
 
 
 class MaterialSerializers(serializers.ModelSerializer):
@@ -41,3 +37,20 @@ class QuestionAnswerSerializers(serializers.ModelSerializer):
         model = models.QuestionAnswer
         fields = '__all__'
 
+
+class AssignmentSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = models.Assignment
+        fields = '__all__'
+
+
+class SubmissionSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = models.Submission
+        fields = '__all__'
+
+
+class ResultSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = models.Result
+        fields = '__all__'
