@@ -5,7 +5,9 @@ from rest_framework import generics, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
+
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
 
 from users_app.models import User
 from .serializers import UserSerializer, UserRegistrationSerializer
@@ -37,7 +39,7 @@ def user_list_create(request):
         return Response({'detail': 'You do not have this power'}, status=status.HTTP_403_FORBIDDEN)
 
 
-# Register View (renders the HTML form in DRF browsable API)
+# Register View
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
@@ -49,10 +51,11 @@ class RegisterView(generics.CreateAPIView):
         user = serializer.save(role='student')
         user.set_password(serializer.validated_data['password'])
         user.save()
-        token, _ = Token.objects.get_or_create(user=user)
+        refresh = RefreshToken.for_user(user)
         return Response({
             'message': 'User registered successfully',
-            'token': token.key,
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
             'user': UserSerializer(user).data
         }, status=status.HTTP_201_CREATED)
 
@@ -83,11 +86,27 @@ def login_user(request):
     if not user:
         return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    token, _ = Token.objects.get_or_create(user=user)
+    refresh = RefreshToken.for_user(user)
     return Response({
-        'token': token.key,
+        'access': str(refresh.access_token),
+        'refresh': str(refresh),
         'user': UserSerializer(user).data
     }, status=status.HTTP_200_OK)
+
+
+# Logout View — blacklists the refresh token so it can't be reused
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout_user(request):
+    refresh_token = request.data.get('refresh')
+    if not refresh_token:
+        return Response({'detail': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+        return Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)
+    except TokenError:
+        return Response({'detail': 'Invalid or expired token'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])

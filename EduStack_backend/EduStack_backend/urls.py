@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path
+from rest_framework_simplejwt.views import TokenRefreshView
 import users_app.views as user_views
 import core_app.views as core_views
 
@@ -7,8 +8,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # auth
-    path('api/register/', user_views.register_user, name='regsiter'),
+    path('api/register/', user_views.register_user, name='register'),
     path('api/login/', user_views.login_user, name='login'),
+    path('api/logout/', user_views.logout_user, name='logout'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/protected/', user_views.protected_view, name='protected'),
 
     # users
