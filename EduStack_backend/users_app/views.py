@@ -63,14 +63,25 @@ register_user = RegisterView.as_view()
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_user(request):
-    username = request.data.get('username')
+    identifier = request.data.get('username') or request.data.get('phone')
     password = request.data.get('password')
-    if not username or not password:
-        return Response({'detail': 'Username and password are required'}, status=status.HTTP_400_BAD_REQUEST)
+    if not identifier or not password:
+        return Response(
+            {'detail': 'Username or phone and password are required'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
-    user = authenticate(username=username, password=password)
+    # Look up user by username or phone number to get the actual username for authenticate()
+    user_record = User.objects.filter(username=identifier).first()
+    if user_record is None:
+        user_record = User.objects.filter(mobile_no=identifier).first()
+
+    user = authenticate(
+        username=user_record.username if user_record else identifier,
+        password=password
+    )
     if not user:
-        return Response({'detail': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
     token, _ = Token.objects.get_or_create(user=user)
     return Response({
